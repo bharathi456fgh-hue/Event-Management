@@ -1,0 +1,2887 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#18221f" />
+    <title>Gather — Event Operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #18221f;
+        --muted: #76817c;
+        --line: #e6eae6;
+        --paper: #f5f7f4;
+        --white: #fff;
+        --lime: #e7b84a;
+        --orange: #ff815c;
+        --blue: #92b6f5;
+        --green: #4e9271;
+        --sidebar: 236px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .app {
+        min-height: 100vh;
+      }
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 5;
+        display: flex;
+        width: var(--sidebar);
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 27px 17px 18px;
+        color: #f6f8f3;
+        background: var(--ink);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 0 10px;
+        font:
+          800 22px Manrope,
+          sans-serif;
+        letter-spacing: 0;
+      }
+      .brand-mark {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        place-items: center;
+        border-radius: 10px 10px 10px 3px;
+        color: var(--ink);
+        background: var(--lime);
+        font-size: 17px;
+      }
+      .workspace-switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 34px 0 29px;
+        padding: 11px 10px;
+        border: 1px solid #39443f;
+        border-radius: 8px;
+        background: #222d28;
+      }
+      .workspace-avatar {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: 7px;
+        color: #1d2822;
+        background: #f5a98f;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .workspace-copy {
+        min-width: 0;
+        flex: 1;
+      }
+      .workspace-copy strong,
+      .workspace-copy small {
+        display: block;
+      }
+      .workspace-copy strong {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .workspace-copy small {
+        margin-top: 3px;
+        color: #a3aea8;
+        font-size: 10px;
+      }
+      .nav-label {
+        padding: 0 11px;
+        color: #83908a;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .nav-list {
+        display: grid;
+        gap: 4px;
+        margin: 10px 0 30px;
+        padding: 0;
+        list-style: none;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 40px;
+        padding: 0 11px;
+        border-radius: 7px;
+        color: #b8c1bc;
+        font-size: 13px;
+        text-decoration: none;
+      }
+      .nav-item svg {
+        width: 17px;
+        height: 17px;
+        stroke-width: 1.8;
+      }
+      .nav-item.active {
+        color: #f6f8f3;
+        background: #303b35;
+      }
+      .nav-item.active svg {
+        color: var(--lime);
+      }
+      .nav-count {
+        margin-left: auto;
+        color: #98a49d;
+        font-size: 11px;
+      }
+      .sidebar-spacer {
+        flex: 1;
+      }
+      .team-card {
+        padding: 13px;
+        border: 1px solid #39443f;
+        border-radius: 8px;
+        background: #222d28;
+      }
+      .team-card-title {
+        display: flex;
+        justify-content: space-between;
+        color: #b8c1bc;
+        font-size: 11px;
+      }
+      .team-card-title strong {
+        color: white;
+        font-weight: 600;
+      }
+      .avatars {
+        display: flex;
+        margin-top: 13px;
+        padding-left: 2px;
+      }
+      .avatars span {
+        display: grid;
+        width: 27px;
+        height: 27px;
+        margin-left: -3px;
+        place-items: center;
+        border: 2px solid #222d28;
+        border-radius: 50%;
+        color: #24302a;
+        background: #f4bf9e;
+        font-size: 9px;
+        font-weight: 700;
+      }
+      .avatars span:nth-child(2) {
+        background: #b4d6c1;
+      }
+      .avatars span:nth-child(3) {
+        background: #c0c9f7;
+      }
+      .avatars span:nth-child(4) {
+        color: #fff;
+        background: #59655f;
+      }
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 19px;
+        padding: 15px 7px 0;
+        border-top: 1px solid #39443f;
+      }
+      .profile .workspace-avatar {
+        border-radius: 50%;
+        color: #fff;
+        background: #648471;
+      }
+      .profile-name {
+        flex: 1;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .profile-name small {
+        display: block;
+        margin-top: 3px;
+        color: #91a098;
+        font-size: 10px;
+        font-weight: 400;
+      }
+      .main {
+        min-height: 100vh;
+        margin-left: var(--sidebar);
+      }
+      .topbar {
+        display: flex;
+        height: 72px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 43px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.74);
+      }
+      .crumb {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .crumb strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 17px;
+      }
+      .icon-button {
+        display: grid;
+        width: 35px;
+        height: 35px;
+        place-items: center;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        color: #56615b;
+        background: transparent;
+      }
+      .icon-button:hover {
+        border-color: var(--line);
+        background: #fff;
+      }
+      .icon-button svg {
+        width: 17px;
+        height: 17px;
+      }
+      .notification {
+        position: relative;
+      }
+      .notification::after {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 6px;
+        height: 6px;
+        border: 1px solid white;
+        border-radius: 50%;
+        background: var(--orange);
+        content: "";
+      }
+      .top-avatar {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        place-items: center;
+        border-radius: 50%;
+        color: #fff;
+        background: #648471;
+        font-size: 10px;
+        font-weight: 700;
+      }
+      .content {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 34px 43px 52px;
+      }
+      .welcome-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 9px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .eyebrow .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #79ad88;
+      }
+      h1 {
+        margin: 0;
+        font:
+          700 31px Manrope,
+          sans-serif;
+        letter-spacing: 0;
+      }
+      .welcome-subtitle {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .primary-button {
+        display: inline-flex;
+        height: 41px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 0 15px;
+        border: 0;
+        border-radius: 6px;
+        color: var(--ink);
+        background: var(--lime);
+        font-size: 12px;
+        font-weight: 700;
+        transition:
+          transform 0.15s,
+          background 0.15s;
+      }
+      .primary-button:hover {
+        transform: translateY(-1px);
+        background: #c6e95a;
+      }
+      .primary-button svg {
+        width: 16px;
+        height: 16px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+        margin-top: 28px;
+      }
+      .stat {
+        min-height: 105px;
+        padding: 17px 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+      }
+      .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .stat-icon {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        border-radius: 7px;
+        color: #34413a;
+        background: #f0f3ef;
+      }
+      .stat-icon svg {
+        width: 15px;
+        height: 15px;
+      }
+      .stat-value {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-top: 9px;
+        font:
+          700 25px Manrope,
+          sans-serif;
+      }
+      .stat-change {
+        color: var(--green);
+        font:
+          600 10px "DM Sans",
+          sans-serif;
+      }
+      .stat-change.down {
+        color: #b97861;
+      }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.75fr) minmax(245px, 0.85fr);
+        gap: 18px;
+        margin-top: 23px;
+        align-items: start;
+      }
+      .panel {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+      .panel-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 19px 15px;
+      }
+      .panel-heading h2 {
+        margin: 0;
+        font:
+          700 15px Manrope,
+          sans-serif;
+        letter-spacing: 0;
+      }
+      .panel-heading p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .text-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 0;
+        border: 0;
+        color: #566c60;
+        background: transparent;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .text-button svg {
+        width: 14px;
+        height: 14px;
+      }
+      .filters {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 19px 15px;
+        border-bottom: 1px solid var(--line);
+      }
+      .filter-button {
+        padding: 7px 10px;
+        border: 0;
+        border-radius: 5px;
+        color: #737e78;
+        background: transparent;
+        font-size: 10px;
+      }
+      .filter-button.selected {
+        color: var(--ink);
+        background: #edf1ec;
+        font-weight: 700;
+      }
+      .search {
+        display: flex;
+        width: 155px;
+        height: 30px;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        padding: 0 8px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        color: #8a958e;
+      }
+      .search svg {
+        width: 13px;
+        height: 13px;
+        flex: 0 0 auto;
+      }
+      .search input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        color: var(--ink);
+        background: transparent;
+        font-size: 10px;
+      }
+      .event-list {
+        display: grid;
+      }
+      .event-row {
+        display: grid;
+        grid-template-columns: 74px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 13px;
+        padding: 14px 19px;
+        border-bottom: 1px solid #edf0ed;
+      }
+      .event-row:last-child {
+        border-bottom: 0;
+      }
+      .event-thumb {
+        width: 74px;
+        height: 61px;
+        border-radius: 5px;
+        background-position: center;
+        background-size: cover;
+      }
+      .event-info {
+        min-width: 0;
+      }
+      .event-info h3 {
+        overflow: hidden;
+        margin: 0;
+        font-size: 12px;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .event-rating {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-top: 7px;
+      }
+      .rating-star {
+        display: grid;
+        width: 19px;
+        height: 19px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        color: #a0a9a3;
+        background: transparent;
+        cursor: pointer;
+      }
+      .rating-star svg {
+        width: 14px;
+        height: 14px;
+        fill: transparent;
+      }
+      .rating-star.selected {
+        color: #b97835;
+      }
+      .rating-star.selected svg {
+        fill: currentColor;
+      }
+      .rating-star:focus-visible {
+        outline: 2px solid #477c66;
+        outline-offset: 1px;
+      }
+      .rating-copy {
+        margin-left: 5px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .event-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .event-meta svg {
+        width: 12px;
+        height: 12px;
+      }
+      .event-side {
+        display: grid;
+        justify-items: end;
+        gap: 9px;
+      }
+      .status {
+        padding: 5px 8px;
+        border-radius: 4px;
+        color: #4e785f;
+        background: #edf5ee;
+        font-size: 9px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .status.planning {
+        color: #92613c;
+        background: #fff2e5;
+      }
+      .status.completed {
+        color: #69766f;
+        background: #eff1ef;
+      }
+      .attendees {
+        color: #79847e;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .empty-state {
+        padding: 36px 15px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 12px;
+      }
+      .right-column {
+        display: grid;
+        gap: 18px;
+      }
+      .calendar-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .calendar-head strong {
+        font:
+          700 12px Manrope,
+          sans-serif;
+      }
+      .calendar-head .calendar-arrows {
+        display: flex;
+        gap: 2px;
+        margin-left: auto;
+      }
+      .calendar-arrows button {
+        display: grid;
+        width: 25px;
+        height: 25px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        color: #68746d;
+        background: #fff;
+      }
+      .calendar-arrows svg {
+        width: 13px;
+        height: 13px;
+      }
+      .calendar {
+        padding: 0 17px 17px;
+      }
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 3px;
+        text-align: center;
+      }
+      .calendar-grid span,
+      .calendar-grid button {
+        display: grid;
+        aspect-ratio: 1;
+        place-items: center;
+        color: #67736c;
+        font-size: 10px;
+      }
+      .calendar-grid button {
+        position: relative;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        cursor: pointer;
+      }
+      .calendar-grid button:hover {
+        background: #f0f3ef;
+      }
+      .calendar-grid button:focus-visible {
+        outline: 2px solid #8da895;
+        outline-offset: 1px;
+      }
+      .calendar-grid .weekday {
+        color: #9ba49f;
+        font-size: 9px;
+        font-weight: 600;
+      }
+      .calendar-grid .faded {
+        color: #c4cbc6;
+      }
+      .calendar-grid .today {
+        border-radius: 50%;
+        color: var(--ink);
+        background: var(--lime);
+        font-weight: 800;
+      }
+      .calendar-grid .selected:not(.today) {
+        box-shadow: inset 0 0 0 1px #82988a;
+        font-weight: 800;
+      }
+      .calendar-grid .has-event {
+        position: relative;
+      }
+      .calendar-grid .has-event::after {
+        position: absolute;
+        bottom: 3px;
+        left: calc(50% - 2px);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--orange);
+        content: "";
+      }
+      .calendar-selection {
+        padding: 12px 17px 16px;
+        border-top: 1px solid var(--line);
+      }
+      .calendar-selection-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .calendar-selection-head strong {
+        display: block;
+        color: var(--ink);
+        font-size: 11px;
+      }
+      .calendar-selection-head p,
+      .calendar-empty {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .calendar-event-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 11px;
+      }
+      .calendar-event {
+        display: grid;
+        grid-template-columns: 3px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+      }
+      .calendar-event::before {
+        width: 3px;
+        height: 28px;
+        border-radius: 3px;
+        background: var(--orange);
+        content: "";
+      }
+      .calendar-event-copy {
+        min-width: 0;
+      }
+      .calendar-event-copy strong,
+      .calendar-event-copy small {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .calendar-event-copy strong {
+        color: var(--ink);
+        font-size: 10px;
+      }
+      .calendar-event-copy small {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 9px;
+      }
+      .calendar-event .status {
+        font-size: 8px;
+      }
+      .schedule {
+        padding: 0 18px 17px;
+      }
+      .schedule-item {
+        display: grid;
+        grid-template-columns: 41px 3px minmax(0, 1fr);
+        gap: 9px;
+        padding: 12px 0;
+        border-top: 1px solid #edf0ed;
+      }
+      .schedule-time {
+        padding-top: 1px;
+        color: #7d8882;
+        font-size: 9px;
+      }
+      .schedule-line {
+        border-radius: 3px;
+        background: var(--blue);
+      }
+      .schedule-item:nth-child(2) .schedule-line {
+        background: var(--orange);
+      }
+      .schedule-item:nth-child(3) .schedule-line {
+        background: #b6d37b;
+      }
+      .schedule-copy strong {
+        display: block;
+        overflow: hidden;
+        font-size: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .schedule-copy small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 9px;
+      }
+      dialog {
+        width: min(440px, calc(100% - 28px));
+        padding: 0;
+        border: 1px solid #dfe5df;
+        border-radius: 9px;
+        color: var(--ink);
+        box-shadow: 0 22px 70px #17221f35;
+      }
+      dialog::backdrop {
+        background: #17221f80;
+        backdrop-filter: blur(2px);
+      }
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 22px 15px;
+        border-bottom: 1px solid var(--line);
+      }
+      .modal-head h2 {
+        margin: 0;
+        font:
+          700 17px Manrope,
+          sans-serif;
+      }
+      .modal-body {
+        display: grid;
+        gap: 13px;
+        padding: 19px 22px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+      .field label {
+        color: #59655e;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .field input,
+      .field select {
+        width: 100%;
+        height: 38px;
+        padding: 0 10px;
+        border: 1px solid #dfe5df;
+        border-radius: 5px;
+        outline-color: #92ad86;
+        color: var(--ink);
+        background: white;
+        font-size: 12px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px;
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 0 22px 20px;
+      }
+      .secondary-button {
+        height: 38px;
+        padding: 0 13px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        color: #55615a;
+        background: white;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .toast {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        z-index: 10;
+        padding: 12px 16px;
+        border-radius: 6px;
+        color: white;
+        background: var(--ink);
+        box-shadow: 0 8px 24px #18221f30;
+        font-size: 12px;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: 0.2s ease;
+        pointer-events: none;
+      }
+      .toast.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      #overview-page[hidden],
+      #section-page[hidden] {
+        display: none;
+      }
+      .page-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+      .page-heading h1 {
+        font-size: 27px;
+      }
+      .page-heading p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .page-kicker {
+        margin-bottom: 8px;
+        color: var(--green);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .page-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .page-summary .stat {
+        min-height: 89px;
+        padding: 14px 16px;
+      }
+      .page-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .page-toolbar h2 {
+        margin: 0;
+        font:
+          700 14px Manrope,
+          sans-serif;
+      }
+      .page-toolbar .search {
+        width: 220px;
+        margin-left: auto;
+      }
+      .page-toolbar select {
+        height: 30px;
+        padding: 0 8px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        color: #59655e;
+        background: #fff;
+        font-size: 10px;
+      }
+      .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      .data-table th {
+        padding: 11px 16px;
+        color: #8a958e;
+        background: #fafbfa;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .data-table td {
+        padding: 13px 16px;
+        border-top: 1px solid #edf0ed;
+        color: #59655e;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .data-table td:first-child {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .table-person {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .person-dot {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: 50%;
+        color: #37433c;
+        background: #e2eadf;
+        font-size: 9px;
+        font-weight: 700;
+      }
+      .data-table tr[hidden],
+      .venue-card[hidden] {
+        display: none;
+      }
+      .table-action {
+        display: inline-grid;
+        width: 29px;
+        height: 29px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        color: #68746d;
+        background: white;
+      }
+      .table-action:hover {
+        color: #a24f3d;
+        border-color: #f1c9bd;
+      }
+      .table-action svg {
+        width: 14px;
+        height: 14px;
+      }
+      .venue-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .venue-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: white;
+      }
+      .venue-photo {
+        height: 145px;
+        background-position: center;
+        background-size: cover;
+      }
+      .venue-copy {
+        padding: 14px;
+      }
+      .venue-copy h2 {
+        margin: 0;
+        font:
+          700 14px Manrope,
+          sans-serif;
+      }
+      .venue-copy p {
+        margin: 5px 0 12px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .venue-facts {
+        display: flex;
+        gap: 13px;
+        padding-top: 11px;
+        border-top: 1px solid var(--line);
+        color: #59655e;
+        font-size: 10px;
+      }
+      .task-list {
+        display: grid;
+      }
+      .task-row {
+        display: grid;
+        grid-template-columns: 20px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 17px;
+        border-top: 1px solid #edf0ed;
+      }
+      .task-row input {
+        width: 15px;
+        height: 15px;
+        accent-color: #62856c;
+      }
+      .task-row strong {
+        display: block;
+        font-size: 11px;
+      }
+      .task-row small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .task-row.done strong {
+        color: #919b95;
+        text-decoration: line-through;
+      }
+      .inline-form {
+        display: flex;
+        gap: 8px;
+      }
+      .inline-form input,
+      .settings-form input[type="text"],
+      .settings-form input[type="email"] {
+        height: 38px;
+        padding: 0 10px;
+        border: 1px solid #dfe5df;
+        border-radius: 5px;
+        outline-color: #92ad86;
+        color: var(--ink);
+        background: #fff;
+        font-size: 11px;
+      }
+      .inline-form input {
+        min-width: 0;
+        flex: 1;
+      }
+      .settings-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(230px, 0.8fr);
+        gap: 16px;
+        align-items: start;
+      }
+      .settings-form {
+        display: grid;
+        gap: 15px;
+        padding: 18px;
+      }
+      .settings-form .field input {
+        font-size: 11px;
+      }
+      .settings-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        color: #59655e;
+        font-size: 11px;
+      }
+      .settings-toggle input {
+        width: 16px;
+        height: 16px;
+        accent-color: #62856c;
+      }
+      .report-bars {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 13px;
+        align-items: end;
+        height: 210px;
+        padding: 20px 18px 8px;
+      }
+      .report-month {
+        display: grid;
+        height: 100%;
+        grid-template-rows: 1fr auto;
+        justify-items: center;
+        gap: 8px;
+        color: #89948d;
+        font-size: 9px;
+      }
+      .report-bar-track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: end;
+        justify-content: center;
+      }
+      .report-bar {
+        width: min(34px, 65%);
+        min-height: 12px;
+        border-radius: 4px 4px 1px 1px;
+        background: #bad878;
+      }
+      .report-month:nth-child(2n) .report-bar {
+        background: #92b6f5;
+      }
+      .report-legend {
+        display: flex;
+        gap: 15px;
+        padding: 0 18px 16px;
+        color: #78837d;
+        font-size: 10px;
+      }
+      .report-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #bad878;
+      }
+      .legend-dot.blue {
+        background: #92b6f5;
+      }
+      @media (max-width: 1040px) {
+        :root {
+          --sidebar: 205px;
+        }
+        .topbar {
+          padding: 0 28px;
+        }
+        .content {
+          padding-right: 28px;
+          padding-left: 28px;
+        }
+        .dashboard-grid {
+          grid-template-columns: minmax(0, 1.5fr) minmax(230px, 0.8fr);
+        }
+        .event-row {
+          grid-template-columns: 62px minmax(0, 1fr) auto;
+          gap: 10px;
+          padding-right: 14px;
+          padding-left: 14px;
+        }
+        .event-thumb {
+          width: 62px;
+          height: 56px;
+        }
+        .filters {
+          padding-right: 13px;
+          padding-left: 13px;
+        }
+      }
+      @media (max-width: 800px) {
+        :root {
+          --sidebar: 64px;
+        }
+        .sidebar {
+          align-items: center;
+          padding: 20px 8px 13px;
+        }
+        .brand {
+          padding: 0;
+        }
+        .brand-name,
+        .workspace-switch,
+        .nav-label,
+        .nav-item span,
+        .team-card,
+        .profile-name,
+        .profile > svg {
+          display: none;
+        }
+        .nav-list {
+          width: 100%;
+          justify-items: center;
+          margin-top: 28px;
+        }
+        .nav-item {
+          width: 42px;
+          justify-content: center;
+          padding: 0;
+        }
+        .nav-item svg {
+          width: 19px;
+          height: 19px;
+        }
+        .profile {
+          justify-content: center;
+          width: 100%;
+          padding: 14px 0 0;
+        }
+        .topbar {
+          height: 62px;
+          padding: 0 20px;
+        }
+        .content {
+          padding: 29px 20px 40px;
+        }
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+        .right-column {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          align-items: start;
+        }
+      }
+      @media (max-width: 560px) {
+        .topbar {
+          padding: 0 14px;
+        }
+        .top-actions {
+          gap: 7px;
+        }
+        .content {
+          padding: 24px 14px 32px;
+        }
+        .welcome-row {
+          align-items: flex-start;
+        }
+        h1 {
+          font-size: 25px;
+        }
+        .welcome-subtitle {
+          max-width: 230px;
+          line-height: 1.5;
+        }
+        .welcome-row > .primary-button {
+          width: 40px;
+          flex: 0 0 40px;
+          overflow: hidden;
+          gap: 16px;
+          padding: 0 12px;
+          font-size: 0;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 9px;
+          margin-top: 22px;
+        }
+        .stat {
+          min-height: 94px;
+          padding: 13px;
+        }
+        .stat-value {
+          font-size: 22px;
+        }
+        .dashboard-grid {
+          gap: 13px;
+          margin-top: 16px;
+        }
+        .panel-heading {
+          padding: 15px 14px 12px;
+        }
+        .filters {
+          flex-wrap: wrap;
+          gap: 3px;
+          padding: 0 11px 11px;
+        }
+        .filter-button {
+          padding: 7px 8px;
+        }
+        .search {
+          width: 100%;
+          margin: 4px 0 0;
+        }
+        .event-row {
+          grid-template-columns: 56px minmax(0, 1fr);
+          gap: 10px;
+          padding: 12px;
+        }
+        .event-thumb {
+          width: 56px;
+          height: 53px;
+        }
+        .event-side {
+          grid-column: 2;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          justify-items: unset;
+          margin-top: -3px;
+        }
+        .event-info h3 {
+          white-space: normal;
+          line-height: 1.35;
+        }
+        .event-meta {
+          gap: 5px 8px;
+        }
+        .right-column {
+          grid-template-columns: 1fr;
+        }
+        .venue-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .page-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 560px) {
+        .page-heading {
+          align-items: flex-start;
+        }
+        .page-heading h1 {
+          font-size: 23px;
+        }
+        .page-heading .primary-button {
+          flex: 0 0 auto;
+        }
+        .page-toolbar {
+          flex-wrap: wrap;
+        }
+        .page-toolbar .search {
+          width: 100%;
+        }
+        .venue-grid,
+        .settings-grid {
+          grid-template-columns: 1fr;
+        }
+        .venue-photo {
+          height: 175px;
+        }
+        .report-bars {
+          gap: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="Main navigation">
+        <div class="brand">
+          <span class="brand-mark">g</span
+          ><span class="brand-name">gather</span>
+        </div>
+        <div class="workspace-switch">
+          <span class="workspace-avatar">ST</span>
+          <span class="workspace-copy"
+            ><strong>Smart Event</strong><small>Event workspace</small></span
+          >
+          <i
+            data-lucide="chevrons-up-down"
+            style="width: 14px; height: 14px; color: #9aa59f"
+          ></i>
+        </div>
+        <div class="nav-label">Workspace</div>
+        <ul class="nav-list">
+          <li>
+            <a
+              class="nav-item active"
+              href="#overview"
+              aria-label="Overview"
+              title="Overview"
+              ><i data-lucide="layout-dashboard"></i><span>Overview</span></a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-item"
+              href="#events"
+              aria-label="Events"
+              title="Events"
+              ><i data-lucide="calendar-days"></i><span>Events</span
+              ><b class="nav-count" id="event-count">8</b></a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-item"
+              href="#guests"
+              aria-label="Guests"
+              title="Guests"
+              ><i data-lucide="users-round"></i><span>Guests</span></a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-item"
+              href="#venues"
+              aria-label="Venues"
+              title="Venues"
+              ><i data-lucide="map-pin"></i><span>Venues</span></a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-item"
+              href="#vendors"
+              aria-label="Vendors"
+              title="Vendors"
+              ><i data-lucide="briefcase-business"></i><span>Vendors</span></a
+            >
+          </li>
+        </ul>
+        <div class="nav-label">Manage</div>
+        <ul class="nav-list">
+          <li>
+            <a
+              class="nav-item"
+              href="#ratings"
+              aria-label="Ratings"
+              title="Ratings"
+              ><i data-lucide="star"></i><span>Ratings</span></a
+            >
+          </li>
+          <li>
+            <a class="nav-item" href="#tasks" aria-label="Tasks" title="Tasks"
+              ><i data-lucide="list-checks"></i><span>Tasks</span></a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-item"
+              href="#reports"
+              aria-label="Reports"
+              title="Reports"
+              ><i data-lucide="chart-no-axes-column-increasing"></i
+              ><span>Reports</span></a
+            >
+          </li>
+          <li>
+            <a
+              class="nav-item"
+              href="#settings"
+              aria-label="Settings"
+              title="Settings"
+              ><i data-lucide="settings-2"></i><span>Settings</span></a
+            >
+          </li>
+        </ul>
+        <div class="sidebar-spacer"></div>
+        <div class="team-card">
+          <div class="team-card-title">
+            <strong>Your team</strong><span>4 members</span>
+          </div>
+          <div class="avatars">
+            <span>AM</span><span>JL</span><span>RK</span><span>+1</span>
+          </div>
+        </div>
+        <div class="profile">
+          <span class="workspace-avatar">AM</span
+          ><span class="profile-name"
+            >Bharath<small>Event director</small></span
+          ><i
+            data-lucide="more-horizontal"
+            style="width: 16px; height: 16px; color: #9aa59f"
+          ></i>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="crumb">
+            Smart Event <span style="padding: 0 7px; color: #bec6c1">/</span>
+            <strong id="breadcrumb-name">Overview</strong>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" aria-label="Help">
+              <i data-lucide="circle-help"></i></button
+            ><button
+              class="icon-button notification"
+              aria-label="Notifications"
+            >
+              <i data-lucide="bell"></i></button
+            ><span class="top-avatar">AM</span>
+          </div>
+        </header>
+        <section class="content" id="overview-page">
+          <div class="welcome-row">
+            <div>
+              <div class="eyebrow">
+                <span class="dot"></span>
+                <span id="dashboard-today-date">TUESDAY, OCTOBER 6, 2026</span>
+              </div>
+              <h1>Good morning, Bharath</h1>
+              <p class="welcome-subtitle">
+                Here’s what’s happening across your events.
+              </p>
+            </div>
+            <button class="primary-button" id="open-create">
+              <i data-lucide="plus"></i> Create event
+            </button>
+          </div>
+
+          <section class="stats" aria-label="Event summary">
+            <article class="stat">
+              <div class="stat-top">
+                <span>Active events</span
+                ><span class="stat-icon"
+                  ><i data-lucide="calendar-check-2"></i
+                ></span>
+              </div>
+              <div class="stat-value" id="active-total">
+                8 <span class="stat-change">+2 this month</span>
+              </div>
+            </article>
+            <article class="stat">
+              <div class="stat-top">
+                <span>Total attendees</span
+                ><span class="stat-icon"
+                  ><i data-lucide="users-round"></i
+                ></span>
+              </div>
+              <div class="stat-value">
+                2,486 <span class="stat-change">+12.8%</span>
+              </div>
+            </article>
+            <article class="stat">
+              <div class="stat-top">
+                <span>Tasks completed</span
+                ><span class="stat-icon"
+                  ><i data-lucide="list-checks"></i
+                ></span>
+              </div>
+              <div class="stat-value">
+                76% <span class="stat-change">+8.4%</span>
+              </div>
+            </article>
+            <article class="stat">
+              <div class="stat-top">
+                <span>Budget tracked</span
+                ><span class="stat-icon"><i data-lucide="wallet"></i></span>
+              </div>
+              <div class="stat-value">
+                $84.2k <span class="stat-change down">72% allocated</span>
+              </div>
+            </article>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <h2>Upcoming events</h2>
+                  <p>Your next moments, all in one place</p>
+                </div>
+                <button class="text-button" id="view-all">
+                  View all <i data-lucide="arrow-up-right"></i>
+                </button>
+              </div>
+              <div class="filters" role="group" aria-label="Filter events">
+                <button class="filter-button selected" data-filter="all">
+                  All events</button
+                ><button class="filter-button" data-filter="Planning">
+                  Planning</button
+                ><button class="filter-button" data-filter="Confirmed">
+                  Confirmed
+                </button>
+                <label class="search"
+                  ><i data-lucide="search"></i
+                  ><input
+                    id="event-search"
+                    type="search"
+                    placeholder="Search events"
+                    aria-label="Search events"
+                /></label>
+              </div>
+              <div class="event-list" id="event-list" aria-live="polite"></div>
+            </section>
+
+            <div class="right-column">
+              <section class="panel" id="calendar-panel" aria-label="Event calendar">
+                <div class="panel-heading">
+                  <div class="calendar-head">
+                    <strong id="calendar-month">October 2026</strong
+                    ><span class="calendar-arrows"
+                      ><button id="prev-month" aria-label="Previous month">
+                        <i data-lucide="chevron-left"></i></button
+                      ><button id="next-month" aria-label="Next month">
+                        <i data-lucide="chevron-right"></i></button
+                    ></span>
+                  </div>
+                </div>
+                <div class="calendar">
+                  <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+                <div class="calendar-selection" id="calendar-selection" aria-live="polite"></div>
+              </section>
+              <section class="panel">
+                <div class="panel-heading">
+                  <div>
+                    <h2>Today’s schedule</h2>
+                    <p id="schedule-today-date">Tuesday, October 6</p>
+                  </div>
+                  <button
+                    class="icon-button"
+                    aria-label="More schedule options"
+                  >
+                    <i data-lucide="ellipsis"></i>
+                  </button>
+                </div>
+                <div class="schedule">
+                  <div class="schedule-item">
+                    <span class="schedule-time">10:00 AM</span
+                    ><span class="schedule-line"></span
+                    ><span class="schedule-copy"
+                      ><strong>Creative sync</strong
+                      ><small>Autumn Makers Market · 30 min</small></span
+                    >
+                  </div>
+                  <div class="schedule-item">
+                    <span class="schedule-time">1:30 PM</span
+                    ><span class="schedule-line"></span
+                    ><span class="schedule-copy"
+                      ><strong>Venue walkthrough</strong
+                      ><small>Harbor Lights Gala · 1 hour</small></span
+                    >
+                  </div>
+                  <div class="schedule-item">
+                    <span class="schedule-time">3:00 PM</span
+                    ><span class="schedule-line"></span
+                    ><span class="schedule-copy"
+                      ><strong>Vendor check-in</strong
+                      ><small>Good Food, Good Mood · 30 min</small></span
+                    >
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+        <section class="content" id="section-page" hidden></section>
+      </main>
+    </div>
+
+    <dialog id="create-dialog" aria-labelledby="dialog-title">
+      <form id="create-form">
+        <div class="modal-head">
+          <h2 id="dialog-title">Create an event</h2>
+          <button
+            class="icon-button"
+            type="button"
+            id="close-dialog"
+            aria-label="Close"
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label for="event-name">Event name</label
+            ><input
+              id="event-name"
+              name="name"
+              required
+              maxlength="70"
+              placeholder="e.g. Summer rooftop dinner"
+            />
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="event-date">Date</label
+              ><input id="event-date" name="date" type="date" required />
+            </div>
+            <div class="field">
+              <label for="event-guests">Expected guests</label
+              ><input
+                id="event-guests"
+                name="guests"
+                type="number"
+                min="1"
+                max="99999"
+                required
+                placeholder="120"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label for="event-venue">Venue</label
+            ><input
+              id="event-venue"
+              name="venue"
+              maxlength="55"
+              placeholder="Venue or location"
+            />
+          </div>
+          <div class="field">
+            <label for="event-status">Status</label
+            ><select id="event-status" name="status">
+              <option>Planning</option>
+              <option>Confirmed</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" id="cancel-create">
+            Cancel</button
+          ><button class="primary-button" type="submit">Create event</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="guest-dialog" aria-labelledby="guest-dialog-title">
+      <form id="guest-form">
+        <div class="modal-head">
+          <h2 id="guest-dialog-title">Add a guest</h2>
+          <button
+            class="icon-button"
+            type="button"
+            data-close-guest
+            aria-label="Close"
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label for="guest-name">Full name</label>
+            <input
+              id="guest-name"
+              name="name"
+              required
+              maxlength="70"
+              placeholder="Guest name"
+            />
+          </div>
+          <div class="field">
+            <label for="guest-email">Email address</label>
+            <input
+              id="guest-email"
+              name="email"
+              type="email"
+              required
+              maxlength="100"
+              placeholder="name@example.com"
+            />
+          </div>
+          <div class="field">
+            <label for="guest-event">Event</label>
+            <select id="guest-event" name="event"></select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-close-guest>
+            Cancel
+          </button>
+          <button class="primary-button" type="submit">Add guest</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="vendor-dialog" aria-labelledby="vendor-dialog-title">
+      <form id="vendor-form">
+        <div class="modal-head">
+          <h2 id="vendor-dialog-title">Add a vendor</h2>
+          <button
+            class="icon-button"
+            type="button"
+            data-close-vendor
+            aria-label="Close"
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label for="vendor-name">Company name</label
+            ><input
+              id="vendor-name"
+              name="name"
+              required
+              maxlength="70"
+              placeholder="Vendor name"
+            />
+          </div>
+          <div class="field">
+            <label for="vendor-category">Service</label
+            ><input
+              id="vendor-category"
+              name="category"
+              required
+              maxlength="50"
+              placeholder="Catering, AV, photography"
+            />
+          </div>
+          <div class="field">
+            <label for="vendor-email">Contact email</label
+            ><input
+              id="vendor-email"
+              name="email"
+              type="email"
+              required
+              maxlength="100"
+              placeholder="hello@vendor.com"
+            />
+          </div>
+          <div class="field">
+            <label for="vendor-event">Assigned event</label
+            ><select id="vendor-event" name="event"></select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-close-vendor>
+            Cancel</button
+          ><button class="primary-button" type="submit">Add vendor</button>
+        </div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status"></div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>
+      const image = (id) =>
+        `https://images.unsplash.com/${id}?auto=format&fit=crop&w=300&q=75`;
+      const defaultEvents = [
+        {
+          name: "Autumn Makers Market",
+          date: "Oct 10, 2026",
+          iso: "2026-10-10",
+          venue: "The Foundry, Brooklyn",
+          guests: 320,
+          status: "Confirmed",
+          image: image("photo-1511795409834-ef04bbd61622"),
+        },
+        {
+          name: "Harbor Lights Gala",
+          date: "Oct 16, 2026",
+          iso: "2026-10-16",
+          venue: "Pier 36, Manhattan",
+          guests: 450,
+          status: "Planning",
+          image: image("photo-1519167758481-83f550bb49b3"),
+        },
+        {
+          name: "Good Food, Good Mood",
+          date: "Oct 22, 2026",
+          iso: "2026-10-22",
+          venue: "Brooklyn Grange",
+          guests: 180,
+          status: "Confirmed",
+          image: image("photo-1517248135467-4c7edcad34c4"),
+        },
+        {
+          name: "Design Forward Summit",
+          date: "Nov 03, 2026",
+          iso: "2026-11-03",
+          venue: "Spring Studios, NYC",
+          guests: 600,
+          status: "Planning",
+          image: image("photo-1511578314322-379afb476865"),
+        },
+        {
+          name: "Winter in Bloom",
+          date: "Nov 14, 2026",
+          iso: "2026-11-14",
+          venue: "The Glasshouse",
+          guests: 240,
+          status: "Confirmed",
+          image: image("photo-1464366400600-7168b8af9bc3"),
+        },
+      ];
+      function loadEvents() {
+        try {
+          const savedEvents = JSON.parse(localStorage.getItem("gather-events"));
+          if (Array.isArray(savedEvents)) return savedEvents;
+        } catch {
+          return defaultEvents;
+        }
+        return defaultEvents;
+      }
+
+      const events = loadEvents();
+      events.forEach((event, index) => {
+        if (!event.id) event.id = `local-event-${index}`;
+      });
+      const list = document.querySelector("#event-list");
+      const search = document.querySelector("#event-search");
+      const sectionPage = document.querySelector("#section-page");
+      let filter = "all";
+      let totalEvents = 8 + Math.max(0, events.length - defaultEvents.length);
+      const defaultGuests = [
+        {
+          name: "Jordan Wells",
+          email: "jordan.wells@example.com",
+          event: "Autumn Makers Market",
+          rsvp: "Confirmed",
+        },
+        {
+          name: "Sam Rivera",
+          email: "sam.rivera@example.com",
+          event: "Harbor Lights Gala",
+          rsvp: "Invited",
+        },
+        {
+          name: "Morgan Chen",
+          email: "morgan.chen@example.com",
+          event: "Good Food, Good Mood",
+          rsvp: "Confirmed",
+        },
+        {
+          name: "Taylor Brooks",
+          email: "taylor.brooks@example.com",
+          event: "Design Forward Summit",
+          rsvp: "Declined",
+        },
+      ];
+      const defaultTasks = [
+        {
+          title: "Confirm lighting plan",
+          event: "Harbor Lights Gala",
+          due: "Oct 7",
+          done: false,
+        },
+        {
+          title: "Approve final menu",
+          event: "Good Food, Good Mood",
+          due: "Oct 8",
+          done: false,
+        },
+        {
+          title: "Send maker load-in guide",
+          event: "Autumn Makers Market",
+          due: "Oct 9",
+          done: true,
+        },
+        {
+          title: "Review sponsor signage",
+          event: "Design Forward Summit",
+          due: "Oct 12",
+          done: false,
+        },
+        {
+          title: "Finalize guest seating",
+          event: "Harbor Lights Gala",
+          due: "Oct 13",
+          done: false,
+        },
+      ];
+
+      function loadCollection(key, fallback) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(key));
+          if (Array.isArray(saved)) return saved;
+        } catch {
+          return fallback;
+        }
+        return fallback;
+      }
+
+      const defaultVendors = [
+        {
+          name: "Field & Feast Catering",
+          category: "Catering",
+          event: "Autumn Makers Market",
+          status: "Confirmed",
+          email: "hello@fieldandfeast.co",
+        },
+        {
+          name: "Goodlight Studio",
+          category: "Photography",
+          event: "Harbor Lights Gala",
+          status: "Awaiting quote",
+          email: "studio@goodlight.co",
+        },
+        {
+          name: "Sound Assembly",
+          category: "AV & Production",
+          event: "Design Forward Summit",
+          status: "Confirmed",
+          email: "team@soundassembly.co",
+        },
+        {
+          name: "Stem Society",
+          category: "Floral design",
+          event: "Winter in Bloom",
+          status: "In discussion",
+          email: "events@stemsociety.co",
+        },
+        {
+          name: "Northstar Rentals",
+          category: "Furniture rental",
+          event: "Good Food, Good Mood",
+          status: "Confirmed",
+          email: "bookings@northstar.co",
+        },
+      ];
+
+      function loadSettings() {
+        try {
+          return JSON.parse(localStorage.getItem("gather-settings")) || {};
+        } catch {
+          return {};
+        }
+      }
+
+      const guests = loadCollection("gather-guests", defaultGuests);
+      const tasks = loadCollection("gather-tasks", defaultTasks);
+      tasks.forEach((task, index) => {
+        if (!task.id) task.id = `local-task-${index}`;
+      });
+      const vendors = loadCollection("gather-vendors", defaultVendors);
+      const settings = { workspace: "Smart Event", ...loadSettings() };
+
+      async function apiRequest(endpoint, options = {}) {
+        const headers = { ...options.headers };
+        if (options.body) headers["Content-Type"] = "application/json";
+        const response = await fetch(endpoint, { ...options, headers });
+        if (!response.ok) {
+          const result = await response.json().catch(() => ({}));
+          throw new Error(
+            result.error || `Request failed (${response.status})`,
+          );
+        }
+        return response.status === 204 ? null : response.json();
+      }
+
+      async function refreshWorkspace() {
+        const [
+          savedEvents,
+          savedGuests,
+          savedVendors,
+          savedTasks,
+          savedSettings,
+        ] = await Promise.all([
+          apiRequest("/api/events"),
+          apiRequest("/api/guests"),
+          apiRequest("/api/vendors"),
+          apiRequest("/api/tasks"),
+          apiRequest("/api/settings"),
+        ]);
+        events.splice(0, events.length, ...savedEvents);
+        guests.splice(0, guests.length, ...savedGuests);
+        vendors.splice(0, vendors.length, ...savedVendors);
+        tasks.splice(0, tasks.length, ...savedTasks);
+        Object.assign(settings, savedSettings);
+        totalEvents = events.length;
+        document.querySelector(".workspace-copy strong").textContent =
+          settings.workspace;
+        document.querySelector(".profile-name").firstChild.textContent =
+          settings.name;
+        document.querySelector(".crumb").firstChild.textContent =
+          `${settings.workspace} `;
+        renderEvents();
+        renderCalendar(year, month);
+        renderRoute();
+      }
+
+      function imageSource(value) {
+        if (typeof value === "string" && value.startsWith("https://"))
+          return value;
+        return image(value || "photo-1492684223066-81342ee5ff30");
+      }
+
+      function renderRatingStars(event) {
+        const currentRating = Number(event.rating) || 0;
+        return `<div class="event-rating" role="group" aria-label="Rate ${escapeHtml(event.name)}">${[1, 2, 3, 4, 5].map((rating) => `<button class="rating-star ${rating <= currentRating ? "selected" : ""}" type="button" data-event-rating="${escapeHtml(event.id)}" data-rating="${rating}" aria-label="Rate ${escapeHtml(event.name)} ${rating} out of 5 stars" title="${rating} out of 5"><i data-lucide="star"></i></button>`).join("")}<span class="rating-copy">${currentRating ? `${currentRating}/5` : "Rate event"}</span></div>`;
+      }
+
+      function renderEvents() {
+        const query = search.value.trim().toLowerCase();
+        const visible = events.filter(
+          (event) =>
+            (filter === "all" || event.status === filter) &&
+            `${event.name} ${event.venue}`.toLowerCase().includes(query),
+        );
+        list.innerHTML = visible.length
+          ? visible
+              .map(
+                (event) => `
+        <article class="event-row">
+          <div class="event-thumb" role="img" aria-label="${escapeHtml(event.name)} event photo" style="background-image:url('${imageSource(event.image)}')"></div>
+          <div class="event-info"><h3>${escapeHtml(event.name)}</h3>${renderRatingStars(event)}<div class="event-meta"><span><i data-lucide="calendar-days"></i>${escapeHtml(event.date)}</span><span><i data-lucide="map-pin"></i>${escapeHtml(event.venue || "Venue to be confirmed")}</span></div></div>
+          <div class="event-side"><span class="status ${event.status.toLowerCase()}">${event.status}</span><span class="attendees">${Number(event.guests).toLocaleString()} guests</span></div>
+        </article>`,
+              )
+              .join("")
+          : '<div class="empty-state">No events match your search.</div>';
+        if (window.lucide) lucide.createIcons();
+        document.querySelector("#event-count").textContent = totalEvents;
+        document.querySelector("#active-total").innerHTML =
+          `${totalEvents} <span class="stat-change">+2 this month</span>`;
+      }
+
+      async function saveEventRating(button) {
+        const eventId = button.dataset.eventRating;
+        const rating = Number(button.dataset.rating);
+        const ratedEvent = events.find((item) => item.id === eventId);
+        if (!ratedEvent) {
+          showToast("This event is no longer available");
+          return;
+        }
+        button.disabled = true;
+        const previousRating = ratedEvent.rating;
+        try {
+          if (location.protocol === "file:") {
+            localStorage.setItem(
+              "gather-events",
+              JSON.stringify(
+                events.map((item) =>
+                  item.id === eventId ? { ...item, rating } : item,
+                ),
+              ),
+            );
+            ratedEvent.rating = rating;
+          } else {
+            await apiRequest(
+              `/api/events/${encodeURIComponent(eventId)}/rating`,
+              {
+                method: "PATCH",
+                body: JSON.stringify({ rating }),
+              },
+            );
+            ratedEvent.rating = rating;
+          }
+          renderEvents();
+          renderRoute();
+          showToast(
+            location.protocol === "file:"
+              ? `Rating saved in this browser: ${rating}/5`
+              : `Event rated ${rating} out of 5`,
+          );
+        } catch (error) {
+          ratedEvent.rating = previousRating;
+          button.disabled = false;
+          showToast(error.message);
+        }
+      }
+
+      list.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-event-rating]");
+        if (button) saveEventRating(button);
+      });
+      sectionPage.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-event-rating]");
+        if (button) saveEventRating(button);
+      });
+
+      function escapeHtml(value) {
+        return String(value).replace(
+          /[&<>"']/g,
+          (char) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[char],
+        );
+      }
+
+      function calendarDateKey(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      }
+
+      const currentDate = new Date();
+      const todayDateKey = calendarDateKey(currentDate);
+      let selectedCalendarDate = todayDateKey;
+      document.querySelector("#dashboard-today-date").textContent =
+        currentDate
+          .toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })
+          .toUpperCase();
+      document.querySelector("#schedule-today-date").textContent =
+        currentDate.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        });
+
+      function renderCalendar(year, month) {
+        const date = new Date(year, month, 1);
+        document.querySelector("#calendar-month").textContent =
+          date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+        const firstDay = date.getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const prevDays = new Date(year, month, 0).getDate();
+        const grid = document.querySelector("#calendar-grid");
+        const weekdays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+        const cells = weekdays.map(
+          (day) => `<span class="weekday">${day}</span>`,
+        );
+        for (let day = firstDay - 1; day >= 0; day--)
+          cells.push(`<span class="faded">${prevDays - day}</span>`);
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const calendarDay = new Date(year, month, day);
+          const dateEvents = events.filter((event) => event.iso === dateKey);
+          const isToday = dateKey === todayDateKey;
+          const isSelected = dateKey === selectedCalendarDate;
+          const eventSummary = dateEvents.map((event) => event.name).join(", ");
+          cells.push(
+            `<button class="calendar-day${isToday ? " today" : ""}${isSelected ? " selected" : ""}${dateEvents.length ? " has-event" : ""}" type="button" data-calendar-date="${dateKey}" aria-pressed="${isSelected}" aria-label="${calendarDay.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}${dateEvents.length ? `, ${dateEvents.length} event${dateEvents.length === 1 ? "" : "s"}: ${escapeHtml(eventSummary)}` : ""}"${dateEvents.length ? ` title="${escapeHtml(eventSummary)}"` : ""}>${day}</button>`,
+          );
+        }
+        const trailing = (7 - ((cells.length - 7) % 7)) % 7;
+        for (let day = 1; day <= trailing; day++)
+          cells.push(`<span class="faded">${day}</span>`);
+        grid.innerHTML = cells.join("");
+        renderCalendarSelection();
+      }
+
+      function renderCalendarSelection() {
+        const selectedDate = new Date(`${selectedCalendarDate}T12:00:00`);
+        const dateEvents = events.filter(
+          (event) => event.iso === selectedCalendarDate,
+        );
+        const formattedDate = selectedDate.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+        const eventRows = dateEvents
+          .map(
+            (event) =>
+              `<article class="calendar-event"><div class="calendar-event-copy"><strong>${escapeHtml(event.name)}</strong><small>${escapeHtml(event.venue || "Venue to be confirmed")} · ${Number(event.guests || 0).toLocaleString()} guests</small></div><span class="status ${event.status === "Planning" ? "planning" : ""}">${escapeHtml(event.status || "Planning")}</span></article>`,
+          )
+          .join("");
+        document.querySelector("#calendar-selection").innerHTML =
+          `<div class="calendar-selection-head"><div><strong>${formattedDate}</strong><p>${dateEvents.length ? `${dateEvents.length} event${dateEvents.length === 1 ? "" : "s"} scheduled` : "No events scheduled"}</p></div><button class="text-button" id="calendar-add-event" type="button"><i data-lucide="plus"></i> Add event</button></div>${dateEvents.length ? `<div class="calendar-event-list">${eventRows}</div>` : '<p class="calendar-empty">Use this date to plan a new event.</p>'}`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      const pageTitles = {
+        overview: "Overview",
+        events: "Events",
+        ratings: "Ratings",
+        guests: "Guests",
+        venues: "Venues",
+        vendors: "Vendors",
+        tasks: "Tasks",
+        reports: "Reports",
+        settings: "Settings",
+      };
+      function pageHeading(kicker, title, description, action = "") {
+        return `<div class="page-heading"><div><div class="page-kicker">${kicker}</div><h1>${title}</h1><p>${description}</p></div>${action}</div>`;
+      }
+
+      function renderRatingsPage() {
+        const ratedEvents = events.filter((item) => {
+          const rating = Number(item.rating);
+          return Number.isInteger(rating) && rating >= 1 && rating <= 5;
+        });
+        const average = ratedEvents.length
+          ? (
+              ratedEvents.reduce((sum, item) => sum + Number(item.rating), 0) /
+              ratedEvents.length
+            ).toFixed(1)
+          : "—";
+        const rows = events
+          .map(
+            (item) => `
+          <article class="event-row">
+            <div class="event-thumb" role="img" aria-label="${escapeHtml(item.name)} event photo" style="background-image:url('${imageSource(item.image)}')"></div>
+            <div class="event-info"><h3>${escapeHtml(item.name)}</h3>${renderRatingStars(item)}<div class="event-meta"><span><i data-lucide="calendar-days"></i>${escapeHtml(item.date)}</span><span><i data-lucide="map-pin"></i>${escapeHtml(item.venue || "Venue to be confirmed")}</span></div></div>
+            <div class="event-side"><span class="status ${item.status.toLowerCase()}">${escapeHtml(item.status)}</span><span class="attendees">${Number(item.guests).toLocaleString()} guests</span></div>
+          </article>`,
+          )
+          .join("");
+        return `${pageHeading("Workspace / Feedback", "Event ratings", "Review your event scores and rate each event from one to five stars.")}
+          <div class="page-summary">
+            <article class="stat"><div class="stat-top"><span>Events rated</span><span class="stat-icon"><i data-lucide="clipboard-check"></i></span></div><div class="stat-value">${ratedEvents.length} / ${events.length}</div></article>
+            <article class="stat"><div class="stat-top"><span>Average rating</span><span class="stat-icon"><i data-lucide="star"></i></span></div><div class="stat-value">${average}${average === "—" ? "" : " / 5"}</div></article>
+            <article class="stat"><div class="stat-top"><span>Awaiting rating</span><span class="stat-icon"><i data-lucide="hourglass"></i></span></div><div class="stat-value">${events.length - ratedEvents.length}</div></article>
+            <article class="stat"><div class="stat-top"><span>Total events</span><span class="stat-icon"><i data-lucide="calendar-days"></i></span></div><div class="stat-value">${events.length}</div></article>
+          </div>
+          <section class="panel"><div class="panel-heading"><div><h2>Rate your events</h2><p>Select a star to save or update an event rating.</p></div></div><div class="event-list">${rows || '<div class="empty-state">No events available to rate yet.</div>'}</div></section>`;
+      }
+
+      function renderEventsPage() {
+        const rows = events
+          .map(
+            (item, index) => `
+          <tr data-searchable data-event-status="${escapeHtml(item.status)}">
+            <td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.date)}</td><td>${escapeHtml(item.venue)}</td>
+            <td>${Number(item.guests).toLocaleString()}</td><td><span class="status ${item.status.toLowerCase()}">${escapeHtml(item.status)}</span></td>
+            <td><button class="table-action" type="button" data-remove-event="${escapeHtml(item.id)}" aria-label="Remove ${escapeHtml(item.name)}"><i data-lucide="trash-2"></i></button></td>
+          </tr>`,
+          )
+          .join("");
+        return `${pageHeading("Workspace / Planning", "Events", "Plan, track, and coordinate every event in your portfolio.", '<button class="primary-button" type="button" data-open-event><i data-lucide="plus"></i> Create event</button>')}
+          <div class="page-summary">
+            <article class="stat"><div class="stat-top"><span>Portfolio events</span><span class="stat-icon"><i data-lucide="calendar-days"></i></span></div><div class="stat-value">${totalEvents}</div></article>
+            <article class="stat"><div class="stat-top"><span>Confirmed</span><span class="stat-icon"><i data-lucide="badge-check"></i></span></div><div class="stat-value">${events.filter((item) => item.status === "Confirmed").length}</div></article>
+            <article class="stat"><div class="stat-top"><span>In planning</span><span class="stat-icon"><i data-lucide="clipboard-list"></i></span></div><div class="stat-value">${events.filter((item) => item.status === "Planning").length}</div></article>
+            <article class="stat"><div class="stat-top"><span>Expected guests</span><span class="stat-icon"><i data-lucide="users-round"></i></span></div><div class="stat-value">${events.reduce((sum, item) => sum + Number(item.guests || 0), 0).toLocaleString()}</div></article>
+          </div>
+          <section class="panel"><div class="page-toolbar"><h2>Event portfolio</h2><select class="field-input" data-event-filter aria-label="Filter by status"><option value="all">All statuses</option><option>Planning</option><option>Confirmed</option></select><label class="search"><i data-lucide="search"></i><input type="search" data-page-search placeholder="Search events" aria-label="Search events"></label></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Event</th><th>Date</th><th>Venue</th><th>Guests</th><th>Status</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="6">No events yet. Create your first event to get started.</td></tr>'}</tbody></table></div></section>`;
+      }
+
+      function renderGuestsPage() {
+        const rows = guests
+          .map((guest) => {
+            const initials = guest.name
+              .split(/\s+/)
+              .map((part) => part[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase();
+            return `<tr data-searchable><td><span class="table-person"><span class="person-dot">${escapeHtml(initials)}</span>${escapeHtml(guest.name)}</span></td><td>${escapeHtml(guest.email)}</td><td>${escapeHtml(guest.event)}</td><td><span class="status ${guest.rsvp === "Invited" ? "planning" : guest.rsvp === "Declined" ? "completed" : ""}">${escapeHtml(guest.rsvp)}</span></td></tr>`;
+          })
+          .join("");
+        const confirmed = guests.filter(
+          (guest) => guest.rsvp === "Confirmed",
+        ).length;
+        return `${pageHeading("Workspace / People", "Guest list", "Manage invitations and keep every attendee detail together.", '<button class="primary-button" type="button" data-open-guest><i data-lucide="user-plus"></i> Add guest</button>')}
+          <div class="page-summary"><article class="stat"><div class="stat-top"><span>Total guests</span><span class="stat-icon"><i data-lucide="users-round"></i></span></div><div class="stat-value">${guests.length}</div></article><article class="stat"><div class="stat-top"><span>Confirmed</span><span class="stat-icon"><i data-lucide="user-check"></i></span></div><div class="stat-value">${confirmed}</div></article><article class="stat"><div class="stat-top"><span>Invited</span><span class="stat-icon"><i data-lucide="mail"></i></span></div><div class="stat-value">${guests.filter((guest) => guest.rsvp === "Invited").length}</div></article><article class="stat"><div class="stat-top"><span>Response rate</span><span class="stat-icon"><i data-lucide="chart-no-axes-combined"></i></span></div><div class="stat-value">${guests.length ? Math.round((confirmed / guests.length) * 100) : 0}%</div></article></div>
+          <section class="panel"><div class="page-toolbar"><h2>All guests</h2><label class="search"><i data-lucide="search"></i><input type="search" data-page-search placeholder="Search name, email, or event" aria-label="Search guests"></label></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Guest</th><th>Email</th><th>Event</th><th>RSVP status</th></tr></thead><tbody>${rows || '<tr><td colspan="4">No guests yet. Add a guest to start your list.</td></tr>'}</tbody></table></div></section>`;
+      }
+
+      function renderVenuesPage() {
+        const venues = [
+          {
+            name: "The Foundry",
+            place: "Brooklyn, NY",
+            capacity: "Up to 500",
+            type: "Industrial loft",
+            photo: "photo-1519167758481-83f550bb49b3",
+          },
+          {
+            name: "The Glasshouse",
+            place: "Chelsea, NY",
+            capacity: "Up to 700",
+            type: "Rooftop venue",
+            photo: "photo-1511795409834-ef04bbd61622",
+          },
+          {
+            name: "Brooklyn Grange",
+            place: "Brooklyn, NY",
+            capacity: "Up to 300",
+            type: "Garden terrace",
+            photo: "photo-1464366400600-7168b8af9bc3",
+          },
+        ];
+        const cards = venues
+          .map(
+            (venue) =>
+              `<article class="venue-card" data-searchable><div class="venue-photo" role="img" aria-label="${venue.name} venue" style="background-image:url('${image(venue.photo)}')"></div><div class="venue-copy"><h2>${venue.name}</h2><p>${venue.type} · ${venue.place}</p><div class="venue-facts"><span><i data-lucide="users-round"></i> ${venue.capacity}</span><span><i data-lucide="map-pin"></i> New York</span></div></div></article>`,
+          )
+          .join("");
+        return `${pageHeading("Workspace / Locations", "Venues", "A curated directory of spaces for your upcoming events.")}
+          <section class="panel"><div class="page-toolbar"><h2>Venue directory</h2><label class="search"><i data-lucide="search"></i><input type="search" data-page-search placeholder="Search venues" aria-label="Search venues"></label></div><div class="venue-grid" style="padding:16px">${cards}</div></section>`;
+      }
+
+      function renderVendorsPage() {
+        const rows = vendors
+          .map((vendor) => {
+            const initials = vendor.name
+              .split(/\s+/)
+              .map((part) => part[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase();
+            return `<tr data-searchable><td><span class="table-person"><span class="person-dot">${escapeHtml(initials)}</span>${escapeHtml(vendor.name)}</span></td><td>${escapeHtml(vendor.category)}</td><td>${escapeHtml(vendor.event)}</td><td><span class="status ${vendor.status === "Confirmed" ? "" : "planning"}">${escapeHtml(vendor.status)}</span></td><td><button class="text-button" type="button" data-vendor-contact="${escapeHtml(vendor.email)}">View contact</button></td></tr>`;
+          })
+          .join("");
+        return `${pageHeading("Workspace / Partners", "Vendors", "Coordinate trusted partners and track their event commitments.", '<button class="primary-button" type="button" data-vendor-add><i data-lucide="plus"></i> Add vendor</button>')}
+          <div class="page-summary"><article class="stat"><div class="stat-top"><span>Active partners</span><span class="stat-icon"><i data-lucide="briefcase-business"></i></span></div><div class="stat-value">${vendors.length}</div></article><article class="stat"><div class="stat-top"><span>Confirmed bookings</span><span class="stat-icon"><i data-lucide="badge-check"></i></span></div><div class="stat-value">${vendors.filter((vendor) => vendor.status === "Confirmed").length}</div></article><article class="stat"><div class="stat-top"><span>Awaiting response</span><span class="stat-icon"><i data-lucide="message-circle-more"></i></span></div><div class="stat-value">${vendors.filter((vendor) => vendor.status !== "Confirmed").length}</div></article><article class="stat"><div class="stat-top"><span>Categories</span><span class="stat-icon"><i data-lucide="blocks"></i></span></div><div class="stat-value">${new Set(vendors.map((vendor) => vendor.category)).size}</div></article></div>
+          <section class="panel"><div class="page-toolbar"><h2>Vendor directory</h2><label class="search"><i data-lucide="search"></i><input type="search" data-page-search placeholder="Search vendors" aria-label="Search vendors"></label></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Vendor</th><th>Service</th><th>Assigned event</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+      }
+
+      function renderTasksPage() {
+        const complete = tasks.filter((task) => task.done).length;
+        const rows = tasks
+          .map(
+            (task, index) =>
+              `<label class="task-row ${task.done ? "done" : ""}"><input type="checkbox" data-task-toggle="${index}" ${task.done ? "checked" : ""}><span><strong>${escapeHtml(task.title)}</strong><small>${escapeHtml(task.event)} · Due ${escapeHtml(task.due)}</small></span><span class="status ${task.done ? "completed" : "planning"}">${task.done ? "Complete" : "To do"}</span></label>`,
+          )
+          .join("");
+        return `${pageHeading("Workspace / Operations", "Tasks", "Keep deadlines visible and move every event forward.")}
+          <div class="page-summary"><article class="stat"><div class="stat-top"><span>Open tasks</span><span class="stat-icon"><i data-lucide="list-checks"></i></span></div><div class="stat-value">${tasks.length - complete}</div></article><article class="stat"><div class="stat-top"><span>Completed</span><span class="stat-icon"><i data-lucide="check-check"></i></span></div><div class="stat-value">${complete}</div></article><article class="stat"><div class="stat-top"><span>Completion rate</span><span class="stat-icon"><i data-lucide="chart-no-axes-column-increasing"></i></span></div><div class="stat-value">${tasks.length ? Math.round((complete / tasks.length) * 100) : 0}%</div></article><article class="stat"><div class="stat-top"><span>Across events</span><span class="stat-icon"><i data-lucide="calendar-days"></i></span></div><div class="stat-value">${new Set(tasks.map((task) => task.event)).size}</div></article></div>
+          <section class="panel"><div class="page-toolbar"><h2>Team checklist</h2></div><div class="task-list">${rows || '<div class="empty-state">No tasks yet. Add a task below.</div>'}</div><form class="inline-form" id="add-task-form" style="padding:14px 16px;border-top:1px solid var(--line)"><input name="title" required maxlength="90" placeholder="Add a task to your checklist"><button class="primary-button" type="submit"><i data-lucide="plus"></i> Add task</button></form></section>`;
+      }
+
+      function renderReportsPage() {
+        const months = [
+          ["May", 42],
+          ["Jun", 58],
+          ["Jul", 47],
+          ["Aug", 73],
+          ["Sep", 62],
+          ["Oct", 88],
+        ];
+        return `${pageHeading("Workspace / Insights", "Reports", "A snapshot of attendance, budget, and event activity.", '<button class="secondary-button" type="button" data-export-report><i data-lucide="download"></i> Export summary</button>')}
+          <div class="page-summary"><article class="stat"><div class="stat-top"><span>Events this year</span><span class="stat-icon"><i data-lucide="calendar-days"></i></span></div><div class="stat-value">24 <span class="stat-change">+18%</span></div></article><article class="stat"><div class="stat-top"><span>Guest attendance</span><span class="stat-icon"><i data-lucide="users-round"></i></span></div><div class="stat-value">2,486</div></article><article class="stat"><div class="stat-top"><span>Average RSVP rate</span><span class="stat-icon"><i data-lucide="user-check"></i></span></div><div class="stat-value">82%</div></article><article class="stat"><div class="stat-top"><span>Average event budget</span><span class="stat-icon"><i data-lucide="wallet"></i></span></div><div class="stat-value">$10.5k</div></article></div>
+          <div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h2>Event attendance</h2><p>Guest check-ins by month</p></div><span class="status">2026</span></div><div class="report-bars">${months.map(([month, height]) => `<div class="report-month"><div class="report-bar-track"><div class="report-bar" style="height:${height}%"></div></div><span>${month}</span></div>`).join("")}</div><div class="report-legend"><span><i class="legend-dot"></i>Guest attendance</span><span><i class="legend-dot blue"></i>Events hosted</span></div></section><section class="panel"><div class="panel-heading"><div><h2>Budget overview</h2><p>Across active events</p></div></div><div style="padding:5px 18px 18px"><div class="task-row"><span class="person-dot"><i data-lucide="utensils"></i></span><span><strong>Venue & catering</strong><small>Largest budget category</small></span><strong>38%</strong></div><div class="task-row"><span class="person-dot"><i data-lucide="music-2"></i></span><span><strong>Production</strong><small>AV, lighting, staging</small></span><strong>27%</strong></div><div class="task-row"><span class="person-dot"><i data-lucide="sparkles"></i></span><span><strong>Design & decor</strong><small>Floral and rentals</small></span><strong>21%</strong></div><div class="task-row"><span class="person-dot"><i data-lucide="more-horizontal"></i></span><span><strong>Other</strong><small>Travel and contingency</small></span><strong>14%</strong></div></div></section></div>`;
+      }
+
+      function renderSettingsPage() {
+        return `${pageHeading("Workspace / Preferences", "Settings", "Manage your workspace profile and notification preferences.")}
+          <div class="settings-grid"><section class="panel"><div class="panel-heading"><div><h2>Workspace profile</h2><p>These details are visible to your team.</p></div></div><form class="settings-form" id="settings-form"><div class="field"><label for="workspace-setting">Workspace name</label><input id="workspace-setting" name="workspace" type="text" required maxlength="55" value="${escapeHtml(settings.workspace || "Studio North")}"></div><div class="field"><label for="name-setting">Your name</label><input id="name-setting" name="name" type="text" required maxlength="55" value="${escapeHtml(settings.name || "Bharath")}"></div><div class="field"><label for="email-setting">Email address</label><input id="email-setting" name="email" type="email" value="${escapeHtml(settings.email || "bharath@studionorth.co")}"></div><label class="settings-toggle">Event reminders<input type="checkbox" name="reminders" ${settings.reminders === false ? "" : "checked"}></label><label class="settings-toggle">Weekly activity summary<input type="checkbox" name="weekly" ${settings.weekly === false ? "" : "checked"}></label><button class="primary-button" type="submit" style="justify-self:start"><i data-lucide="save"></i> Save changes</button></form></section><section class="panel"><div class="panel-heading"><div><h2>Workspace details</h2><p>Account and storage</p></div></div><div style="padding:5px 18px 18px"><div class="task-row"><span class="person-dot"><i data-lucide="users-round"></i></span><span><strong>Team members</strong><small>4 active collaborators</small></span></div><div class="task-row"><span class="person-dot"><i data-lucide="hard-drive"></i></span><span><strong>Data storage</strong><small>Saved in this browser</small></span></div><div class="task-row"><span class="person-dot"><i data-lucide="shield-check"></i></span><span><strong>Workspace plan</strong><small>Studio · Active</small></span></div></div></section></div>`;
+      }
+
+      function renderPage(route) {
+        const renderers = {
+          events: renderEventsPage,
+          ratings: renderRatingsPage,
+          guests: renderGuestsPage,
+          venues: renderVenuesPage,
+          vendors: renderVendorsPage,
+          tasks: renderTasksPage,
+          reports: renderReportsPage,
+          settings: renderSettingsPage,
+        };
+        return renderers[route] ? renderers[route]() : "";
+      }
+
+      function renderRoute() {
+        const route = pageTitles[location.hash.slice(1)]
+          ? location.hash.slice(1)
+          : "overview";
+        const isOverview = route === "overview";
+        document.querySelector("#overview-page").hidden = !isOverview;
+        sectionPage.hidden = isOverview;
+        sectionPage.innerHTML = isOverview ? "" : renderPage(route);
+        if (route === "settings") {
+          sectionPage.querySelector(
+            ".settings-grid .task-row:nth-child(2) small",
+          ).textContent = "Saved in SQLite database";
+        }
+        document.querySelector("#breadcrumb-name").textContent =
+          pageTitles[route];
+        document.querySelectorAll(".nav-item").forEach((link) => {
+          const active = link.hash === `#${route}`;
+          link.classList.toggle("active", active);
+          if (active) link.setAttribute("aria-current", "page");
+          else link.removeAttribute("aria-current");
+        });
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function showToast(message) {
+        const toast = document.querySelector("#toast");
+        toast.textContent = message;
+        toast.classList.add("visible");
+        setTimeout(() => toast.classList.remove("visible"), 2400);
+      }
+
+      function updateEventSearch() {
+        const query = (
+          sectionPage.querySelector("[data-page-search]")?.value || ""
+        )
+          .trim()
+          .toLowerCase();
+        const status =
+          sectionPage.querySelector("[data-event-filter]")?.value || "all";
+        sectionPage.querySelectorAll("[data-searchable]").forEach((row) => {
+          const textMatches = row.textContent.toLowerCase().includes(query);
+          const statusMatches =
+            status === "all" || row.dataset.eventStatus === status;
+          row.hidden = !textMatches || !statusMatches;
+        });
+      }
+
+      sectionPage.addEventListener("input", (event) => {
+        if (event.target.matches("[data-page-search]")) updateEventSearch();
+      });
+      sectionPage.addEventListener("change", async (event) => {
+        if (event.target.matches("[data-page-search], [data-event-filter]"))
+          updateEventSearch();
+        if (event.target.matches("[data-task-toggle]")) {
+          const task = tasks[Number(event.target.dataset.taskToggle)];
+          const previousDone = task.done;
+          try {
+            if (location.protocol === "file:") {
+              const done = event.target.checked;
+              localStorage.setItem(
+                "gather-tasks",
+                JSON.stringify(
+                  tasks.map((item) =>
+                    item === task ? { ...item, done } : item,
+                  ),
+                ),
+              );
+              task.done = done;
+            } else {
+              await apiRequest(`/api/tasks/${encodeURIComponent(task.id)}`, {
+                method: "PATCH",
+                body: JSON.stringify({ done: event.target.checked }),
+              });
+              task.done = event.target.checked;
+            }
+            renderRoute();
+            if (location.protocol === "file:")
+              showToast("Task status saved in this browser");
+          } catch (error) {
+            task.done = previousDone;
+            event.target.checked = previousDone;
+            showToast(error.message);
+          }
+        }
+      });
+      sectionPage.addEventListener("click", async (event) => {
+        if (event.target.closest("[data-open-event]"))
+          document.querySelector("#create-dialog").showModal();
+        if (event.target.closest("[data-open-guest]")) {
+          const select = document.querySelector("#guest-event");
+          select.innerHTML = events
+            .map((item) => `<option>${escapeHtml(item.name)}</option>`)
+            .join("");
+          document.querySelector("#guest-dialog").showModal();
+        }
+        const removeButton = event.target.closest("[data-remove-event]");
+        if (removeButton) {
+          const eventId = removeButton.dataset.removeEvent;
+          try {
+            await apiRequest(`/api/events/${encodeURIComponent(eventId)}`, {
+              method: "DELETE",
+            });
+            const eventIndex = events.findIndex((item) => item.id === eventId);
+            if (eventIndex !== -1) events.splice(eventIndex, 1);
+            totalEvents = events.length;
+            renderEvents();
+            renderCalendar(year, month);
+            renderRoute();
+            showToast("Event removed");
+          } catch (error) {
+            showToast(error.message);
+          }
+        }
+        const vendorContact = event.target.closest("[data-vendor-contact]");
+        if (vendorContact)
+          showToast(`Vendor contact: ${vendorContact.dataset.vendorContact}`);
+        if (event.target.closest("[data-vendor-add]")) {
+          const select = document.querySelector("#vendor-event");
+          select.innerHTML = events
+            .map((item) => `<option>${escapeHtml(item.name)}</option>`)
+            .join("");
+          document.querySelector("#vendor-dialog").showModal();
+        }
+        if (event.target.closest("[data-export-report]")) window.print();
+      });
+      sectionPage.addEventListener("submit", async (event) => {
+        if (event.target.id === "add-task-form") {
+          event.preventDefault();
+          const formData = new FormData(event.target);
+          try {
+            const task =
+              location.protocol === "file:"
+                ? {
+                    id: `local-task-${Date.now()}`,
+                    title: formData.get("title").trim(),
+                    event: "General",
+                    due: "Unscheduled",
+                    done: false,
+                  }
+                : await apiRequest("/api/tasks", {
+                    method: "POST",
+                    body: JSON.stringify({ title: formData.get("title") }),
+                  });
+            if (location.protocol === "file:")
+              localStorage.setItem(
+                "gather-tasks",
+                JSON.stringify([task, ...tasks]),
+              );
+            tasks.unshift(task);
+            event.target.reset();
+            renderRoute();
+            showToast(
+              location.protocol === "file:"
+                ? "Task saved in this browser"
+                : "Task added",
+            );
+          } catch (error) {
+            showToast(error.message);
+          }
+        }
+        if (event.target.id === "settings-form") {
+          event.preventDefault();
+          const formData = new FormData(event.target);
+          try {
+            const savedSettings = await apiRequest("/api/settings", {
+              method: "PUT",
+              body: JSON.stringify({
+                workspace: formData.get("workspace"),
+                name: formData.get("name"),
+                email: formData.get("email"),
+                reminders: formData.has("reminders"),
+                weekly: formData.has("weekly"),
+              }),
+            });
+            Object.assign(settings, savedSettings);
+            document.querySelector(".workspace-copy strong").textContent =
+              settings.workspace;
+            document.querySelector(".profile-name").firstChild.textContent =
+              settings.name;
+            document.querySelector(".crumb").firstChild.textContent =
+              `${settings.workspace} `;
+            showToast("Settings saved");
+          } catch (error) {
+            showToast(error.message);
+          }
+        }
+      });
+
+      document
+        .querySelectorAll("[data-close-guest]")
+        .forEach((button) =>
+          button.addEventListener("click", () =>
+            document.querySelector("#guest-dialog").close(),
+          ),
+        );
+      document
+        .querySelector("#guest-dialog")
+        .addEventListener("click", (event) => {
+          if (event.target === event.currentTarget) event.currentTarget.close();
+        });
+      document
+        .querySelector("#guest-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          const formData = new FormData(form);
+          try {
+            const guest = await apiRequest("/api/guests", {
+              method: "POST",
+              body: JSON.stringify({
+                name: formData.get("name"),
+                email: formData.get("email"),
+                event: formData.get("event"),
+              }),
+            });
+            guests.unshift(guest);
+            form.reset();
+            document.querySelector("#guest-dialog").close();
+            renderRoute();
+            showToast("Guest added");
+          } catch (error) {
+            showToast(error.message);
+          }
+        });
+      document
+        .querySelectorAll("[data-close-vendor]")
+        .forEach((button) =>
+          button.addEventListener("click", () =>
+            document.querySelector("#vendor-dialog").close(),
+          ),
+        );
+      document
+        .querySelector("#vendor-dialog")
+        .addEventListener("click", (event) => {
+          if (event.target === event.currentTarget) event.currentTarget.close();
+        });
+      document
+        .querySelector("#vendor-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          const formData = new FormData(form);
+          try {
+            const vendor = await apiRequest("/api/vendors", {
+              method: "POST",
+              body: JSON.stringify({
+                name: formData.get("name"),
+                category: formData.get("category"),
+                email: formData.get("email"),
+                event: formData.get("event"),
+              }),
+            });
+            vendors.unshift(vendor);
+            form.reset();
+            document.querySelector("#vendor-dialog").close();
+            renderRoute();
+            showToast("Vendor added");
+          } catch (error) {
+            showToast(error.message);
+          }
+        });
+
+      window.addEventListener("hashchange", renderRoute);
+
+      document.querySelectorAll(".filter-button").forEach((button) =>
+        button.addEventListener("click", () => {
+          document
+            .querySelector(".filter-button.selected")
+            .classList.remove("selected");
+          button.classList.add("selected");
+          filter = button.dataset.filter;
+          renderEvents();
+        }),
+      );
+      search.addEventListener("input", renderEvents);
+
+      const dialog = document.querySelector("#create-dialog");
+      function openCreateDialog(date = selectedCalendarDate) {
+        document.querySelector("#event-date").value = date;
+        dialog.showModal();
+      }
+      document
+        .querySelector("#open-create")
+        .addEventListener("click", () => openCreateDialog());
+      document
+        .querySelector("#close-dialog")
+        .addEventListener("click", () => dialog.close());
+      document
+        .querySelector("#cancel-create")
+        .addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+      document
+        .querySelector("#create-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const form = event.currentTarget;
+          const data = new FormData(form);
+          const iso = data.get("date");
+          try {
+            const createdEvent = await apiRequest("/api/events", {
+              method: "POST",
+              body: JSON.stringify({
+                name: data.get("name"),
+                iso,
+                venue: data.get("venue"),
+                guests: Number(data.get("guests")),
+                status: data.get("status"),
+                image: image("photo-1492684223066-81342ee5ff30"),
+              }),
+            });
+            events.unshift(createdEvent);
+            totalEvents = events.length;
+          } catch (error) {
+            showToast(error.message);
+            return;
+          }
+          const [createdYear, createdMonth] = String(iso)
+            .split("-")
+            .map(Number);
+          year = createdYear;
+          month = createdMonth - 1;
+          selectedCalendarDate = String(iso);
+          form.reset();
+          dialog.close();
+          filter = "all";
+          document
+            .querySelector(".filter-button.selected")
+            .classList.remove("selected");
+          document
+            .querySelector('[data-filter="all"]')
+            .classList.add("selected");
+          search.value = "";
+          renderEvents();
+          renderCalendar(year, month);
+          renderRoute();
+          showToast("Event created");
+        });
+      document.querySelector("#view-all").addEventListener("click", () => {
+        document.querySelector('[data-filter="all"]').click();
+        document
+          .querySelector("#events")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      let month = currentDate.getMonth();
+      let year = currentDate.getFullYear();
+      document
+        .querySelector("#calendar-grid")
+        .addEventListener("click", (event) => {
+          const dayButton = event.target.closest("[data-calendar-date]");
+          if (!dayButton) return;
+          selectedCalendarDate = dayButton.dataset.calendarDate;
+          renderCalendar(year, month);
+        });
+      document
+        .querySelector("#calendar-panel")
+        .addEventListener("click", (event) => {
+          if (event.target.closest("#calendar-add-event"))
+            openCreateDialog(selectedCalendarDate);
+        });
+      function shiftMonth(offset) {
+        month += offset;
+        if (month < 0) {
+          month = 11;
+          year--;
+        }
+        if (month > 11) {
+          month = 0;
+          year++;
+        }
+        selectedCalendarDate = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+        renderCalendar(year, month);
+      }
+      document
+        .querySelector("#prev-month")
+        .addEventListener("click", () => shiftMonth(-1));
+      document
+        .querySelector("#next-month")
+        .addEventListener("click", () => shiftMonth(1));
+
+      renderEvents();
+      renderCalendar(year, month);
+      renderRoute();
+      if (window.lucide) lucide.createIcons();
+      refreshWorkspace().catch(() =>
+        showToast("Start the backend with npm start to sync workspace data."),
+      );
+    </script>
+  </body>
+</html>
